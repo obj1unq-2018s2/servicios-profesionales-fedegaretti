@@ -1,0 +1,40 @@
+import universidades.*
+import profesionales.*
+import empresas.*
+
+describe "test empresa"{
+	var sanMartin = new Universidad( provincia = "Buenos Aires", honorarios = 3500)
+	var rosario = new Universidad( provincia = "Santa Fe", honorarios = 2800)
+	var corrientes = new Universidad( provincia = "Corrientes", honorarios = 4200)
+	var hurlingham = new Universidad( provincia = "Buenos Aires", honorarios = 8800)
+	
+	var juana = new ProfesionalVinculado( universidad = rosario )
+	var melina = new ProfesionalAsociado( universidad = corrientes)
+	var rocio = new ProfesionalLibre(universidad = hurlingham, honorariosPorHora = 5000, provinciasDondePuedeTrabajar = #{"Santa Fe", "Cordoba", "Buenos Aires"} )
+	var luciana = new ProfesionalLibre(universidad = rosario, honorariosPorHora = 3200, provinciasDondePuedeTrabajar = #{"Santa Fe", "Entre Rios"}) 
+	
+	var empresa = new Empresa(profesionales = #{juana, melina, rocio, luciana}, honorariosRef = 3500)
+	
+	test "profesionales caros"{
+		assert.equals(#{rocio}, empresa.profesionalesCaros())
+	}
+	test "universidades formadoras"{
+		assert.equals(#{rosario, corrientes,hurlingham},empresa.universidadesFormadoras().asSet())
+	}
+	test "profesional mas barato"{
+		assert.equals(juana, empresa.profesionalMasBarato())
+	}
+	test "provincias cubiertas"{
+		assert.that(empresa.provinciaCubierta("Santa Fe"))
+		assert.that(empresa.provinciaCubierta("Cordoba"))
+		assert.notThat(empresa.provinciaCubierta("Misiones"))	
+	}
+	test "profesionales estudiaron"{
+		assert.equals(2,empresa.cantProfesionalesEstudiaronEn(rosario))
+		assert.equals(1,empresa.cantProfesionalesEstudiaronEn(hurlingham))
+		assert.equals(0,empresa.cantProfesionalesEstudiaronEn(sanMartin))	
+		
+	}
+		
+}
+
